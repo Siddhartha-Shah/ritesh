@@ -8,6 +8,7 @@ use App\Models\Service_name;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Resources\BookingResource;
+use App\Models\Completed;
 
 class ServiceController extends Controller
 {
@@ -197,7 +198,7 @@ class ServiceController extends Controller
         $bookings = Booking::all();
        $list=BookingResource::collection($bookings)->where("action","=","requested")
        ->where("service_id","=",session("service_id"));
-       //return $list;
+       //return $list[0]->action;
        return view("servicer/servicer_request",["bookings"=>$list]);
       }
 
@@ -209,23 +210,19 @@ class ServiceController extends Controller
         $booking->message=$request->message;
         $booking->save();
 
-        $service=Service::find($s_id);
-        $service->booking_id=$booking->booking_id;
-        $service->save();
-
         return redirect("/customer/requested_services");
         // echo "<pre>";
         // print_r($booking->booking_id);
         // echo "</pre>";
       }
-      public function customer_cancel_request($id){
-        $booking=Booking::where("service_id",$id);
+      public function customer_cancel_request($sid,$cid){
+        $booking=Booking::where("service_id",$sid)->where("customer_id",$cid);
         $booking->delete();
         return redirect("/customer/requested_services");
       }
 
       public function customer_completed_work(){
-        $ser=DB::table("bookings")
+        $ser=DB::table("completeds")
         ->select("service_id")
         ->where([
             ["customer_id", "=", session("customer_id")],
@@ -250,6 +247,10 @@ class ServiceController extends Controller
             ["customer_id", "=", session("customer_id")],
             ["action", "=", "requested"]
             ])
+            ->orWhere([
+                ["customer_id", "=", session("customer_id")],
+                ["action", "=", "accepted"]
+                ])
         ->get();
         $arr=array();
         foreach($ser as $s){
@@ -279,6 +280,14 @@ class ServiceController extends Controller
         $booking=Booking::find($id);
         $booking->action="completed";
         $booking->save();
+
+        $completed=new Completed();
+        $completed->action=$booking->action;
+        $completed->service_id=$booking->service_id;
+        $completed->customer_id=$booking->customer_id;
+        $completed->save();
+
+        $booking->delete();
        return redirect("servicer/servicer_request");
     }
 
@@ -291,10 +300,21 @@ class ServiceController extends Controller
     }
 
     public function servicer_completed_work(){
-        $bookings = Booking::all();
-        $list=BookingResource::collection($bookings)->where("action","=","completed")
-        ->where("service_id","=",session("service_id"));
-         return view("servicer/servicer_completed_work",["bookings"=>$list]);
+        $ser=DB::table("completeds")
+        ->select("customer_id")
+        ->where([
+            ["service_id", "=", session("service_id")],
+            ["action", "=", "completed"]
+            ])
+        ->get();
+        $arr=array();
+        foreach($ser as $s){
+            array_push($arr,$s->customer_id);
+        }
+        $customer=Customer::find($arr);
+        //return $customer;
+        // return view("customer/completed_work",["services"=>$service]);
+         return view("servicer/servicer_completed_work",["bookings"=>$customer]);
 
     }
 

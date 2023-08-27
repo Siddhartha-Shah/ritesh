@@ -61,7 +61,7 @@
     <p class="card-text">{{$service->provider_email}}</p>
    <!-- <input class="btn btn-primary" onclick="this.value='REQUESTED'" type="button" value="REQUEST" name="myButton1" />
     -->
-    <form method="POST" action={{ "/customer/cancel_request/" . $service->service_id }}>
+    <form method="POST" action={{ "/customer/cancel_request/" . $service->service_id . "/". session("customer_id")}}>
         @csrf
     <!-- <a href={{ url('/services/select_service', [$service->service_id]) }} class="btn btn-primary mt-2">
     REQUEST

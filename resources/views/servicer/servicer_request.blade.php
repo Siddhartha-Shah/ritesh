@@ -33,7 +33,8 @@
 
   @foreach($booking->customer as $customers)
 
-  <p class="card-text">From: {{$customers->customer_address}}</p>
+  <p class="card-text">From: {{$customers->customer_address}} &nbsp &nbsp &nbsp &nbsp Message: {{$booking->message}}</p>
+  <p class="card-text"></p>
   </div>
   <div class="card-body" style="display:flex;justify-content:space-around;">
   <h5>{{ $booking->booking_id }}</h5>

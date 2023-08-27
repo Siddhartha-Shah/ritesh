@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string("customer_name",25);
             $table->string("customer_email");
             $table->string("customer_address");
-            $table->double("customer_number");
+            $table->unsignedBigInteger("customer_number");
             $table->string("customer_password");
             $table->string("customer_photo",300)->nullable();
             $table->timestamps();

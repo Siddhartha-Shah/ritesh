@@ -13,11 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('services', function (Blueprint $table) {
-            $table->unsignedBigInteger('booking_id')->nullable()->after("customer_id");
-            $table->foreign('booking_id')
-            ->references('booking_id')->on('bookings');
-            //
+        Schema::create('completeds', function (Blueprint $table) {
+            $table->id("completed_id");
+            $table->string('action');
+            $table->unsignedBigInteger('service_id')->nullable();
+            $table->unsignedBigInteger('customer_id')->nullable();
+            $table->timestamps();
         });
     }
 
@@ -28,8 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('services', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('completeds');
     }
 };

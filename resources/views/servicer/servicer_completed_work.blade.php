@@ -26,25 +26,22 @@
            @include('servicer.navbar') 
     </div>
 
-    @foreach($bookings as $booking )
+    @foreach($bookings as $customers)
+    <div class="card text-center mt-4">
 
-<div class="card text-center mt-4">
   <div class="card-header">
-
-  @foreach($booking->customer as $customers)
-
   <p class="card-text">From: {{$customers->customer_address}}</p>
   </div>
-  <div class="card-body" style="display:flex;justify-content:space-around;">
-  <h5>{{ $booking->booking_id }}</h5>
+
+  <div class="card-body" style="display:flex;justify-content:space-around;>
+  <h5>{{ $customers->booking_id }}</h5>
     <h5 class="card-title">{{$customers->customer_name}}</h5>
     <p class="card-text">Contact: {{$customers->customer_number}}</p>
     <p class="card-text">Email: {{$customers->customer_email}}</p>
     <p class="card-text"> Work Completed</p>
-@endforeach
-  </div>
+</div>
 </div>
 @endforeach
-    </div>
+   
     </body>
 </html>
